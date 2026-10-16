@@ -120,6 +120,8 @@ Prices are approximate, taken at the time of ordering, and may change.
 
 ## 6. Wiring
 
+> 🔧 [How It Works](how-it-works.md) explains the circuit, the 100 kΩ resistor and every XIAO pin, and has step-by-step soldering instructions.
+
 > 🧊 The [3D model](3d-model.html) shows where each part sits on the vape and how the wires run. Download the file and open it in a browser to use it.
 
 ```
@@ -135,7 +137,7 @@ LiPo (−) ── JST socket ── XIAO BAT− pad (underside)
 
 - **Not pressed:** the FSR's resistance is above 1 MΩ, so D1 reads LOW and almost no current flows.
 - **Pressed:** the FSR drops to a few kΩ, D1 goes HIGH and the board wakes up.
-- If light presses don't register, swap the 100 kΩ for a 47 kΩ resistor.
+- If light presses don't register, swap the 100 kΩ for a **larger** resistor, such as 220 kΩ. (Earlier notes said 47 kΩ, which would make it less sensitive. [How It Works](how-it-works.md#2-why-100-kω) explains why.)
 - ⚠️ **Check the JST polarity with the multimeter before connecting the battery.** JST connectors aren't wired the same way by every maker. The battery's red wire must reach BAT+.
 
 ## 7. Software plan
@@ -161,7 +163,7 @@ Writing the code is done with Claude Code. **Uploading the firmware** needs the 
 - [ ] Solder the JST socket to the battery pads, check polarity, test charging
 - [ ] Wire the FSR and resistor; read presses over USB serial
 - [ ] Firmware: deep sleep, wake on press, log puffs to flash
-- [ ] Bluetooth test with no wiring: `firmware/ble_test/` and a phone app
+- [x] Bluetooth test with no wiring: `firmware/ble_test/` and a phone app
 - [ ] Firmware: Bluetooth service, tested with the nRF Connect app
 - [ ] Web app: connect, sync time, download puffs
 - [ ] Web app: stats and charts
@@ -210,6 +212,14 @@ Newest entries at the bottom.
 - The USB-C port sits in a notch in the end wall, so I can charge and upload without opening the case.
 - Next step: print it and check the fit with the loose parts before soldering.
 
+### 2026-10-16: Bluetooth works
+- Uploaded `firmware/ble_test/` and connected from the Bluefruit Connect app on my phone. The board advertised as VapeLogger, sent a message every second, and answered `ping` with `pong`.
+- Two problems on the way:
+  - The board stopped showing up on my PC. A quick double-tap of the reset button put it into bootloader mode, which brought back its USB drive and port.
+  - Compiling failed with "No such file or directory" because my repo folder path had a space in it (`Git Repositories`). The Seeed toolchain splits paths at spaces, so the fix was a path without spaces.
+- Wrote [How It Works](how-it-works.md): the reasoning behind the 100 kΩ resistor and the pins, plus the soldering steps.
+- Next step: solder the resistor and the FSR wires, then run the press test.
+
 <!-- Template for new entries:
 ### YYYY-MM-DD: Title
 - What I did
@@ -222,6 +232,8 @@ Newest entries at the bottom.
 
 *(Filled in as I go.)*
 
+- Keep Arduino sketches in a folder path with no spaces. The nRF52 toolchain can't cope with them.
+- If the XIAO disappears from the PC, double-tap reset to get into the bootloader.
 - Shop stock changes quickly. Have a backup option for small parts.
 
 ## 12. Ideas for later
