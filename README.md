@@ -6,6 +6,8 @@ It's also my first hardware engineering project.
 
 **📓 Read the full story in the [Build Journal](docs/build-journal.md)**: background, design decisions, parts list, wiring, milestones and progress notes.
 
+**🧊 See how it fits in the [3D model](docs/3d-model.html)**: an interactive model of the parts on the vape, with a wiring diagram. GitHub shows the file as code, so download it and open it in a browser to use it.
+
 ## At a glance
 
 - **Sensor:** a force-sensitive resistor on the fire button
@@ -16,7 +18,7 @@ It's also my first hardware engineering project.
 ## Repository layout
 
 ```
-docs/       build journal, wiring notes, photos
+docs/       build journal, 3D fit model, wiring notes, photos
 firmware/   Arduino code for the XIAO
 app/        Web Bluetooth phone app            (coming soon)
 ```
