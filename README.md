@@ -19,6 +19,7 @@ It's also my first hardware engineering project.
 
 ```
 docs/       build journal, 3D fit model, wiring notes, photos
+case/       3D-printable case (STL files and the script that makes them)
 firmware/   Arduino code for the XIAO
 app/        Web Bluetooth phone app            (coming soon)
 ```
