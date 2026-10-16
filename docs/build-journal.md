@@ -120,6 +120,8 @@ Prices are approximate, taken at the time of ordering, and may change.
 
 ## 6. Wiring
 
+> 🧊 The [3D model](3d-model.html) shows where each part sits on the vape and how the wires run. Download the file and open it in a browser to use it.
+
 ```
 3V3 ──── FSR ────┬──── D1 (wake pin)
                  │
@@ -194,6 +196,11 @@ Newest entries at the bottom.
 - Uploaded the Blink example. The factory demo cycled red, green and blue; after the upload only the red LED blinks, which is what Blink does on this board.
 - Wrote `firmware/fsr_test/` to read presses over USB serial, ready for when the FSR is wired.
 - Next step: buy the flux pen, practise soldering, then wire the FSR and run the press test.
+
+### 2026-10-16: 3D fit model
+- Made an interactive [3D model](3d-model.html) of the parts on the Aegis Legend 5. It has fitted, exploded and fire-button views, plus a wiring diagram and the parts at real size.
+- The layout puts the FSR flat on the fire button with its tail wrapped round to the back, and the battery on the back panel with the XIAO on top. The whole stack adds about 10 mm to the back.
+- The parts are drawn to real size. The vape's shape, the fire-button position and the FSR tail length are approximate, so check them against the real thing.
 
 <!-- Template for new entries:
 ### YYYY-MM-DD: Title
