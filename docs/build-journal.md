@@ -161,6 +161,7 @@ Writing the code is done with Claude Code. **Uploading the firmware** needs the 
 - [ ] Solder the JST socket to the battery pads, check polarity, test charging
 - [ ] Wire the FSR and resistor; read presses over USB serial
 - [ ] Firmware: deep sleep, wake on press, log puffs to flash
+- [ ] Bluetooth test with no wiring: `firmware/ble_test/` and a phone app
 - [ ] Firmware: Bluetooth service, tested with the nRF Connect app
 - [ ] Web app: connect, sync time, download puffs
 - [ ] Web app: stats and charts
