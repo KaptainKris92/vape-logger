@@ -161,12 +161,14 @@ Writing the code is done with Claude Code. **Uploading the firmware** needs the 
 - [ ] Solder the JST socket to the battery pads, check polarity, test charging
 - [ ] Wire the FSR and resistor; read presses over USB serial
 - [ ] Firmware: deep sleep, wake on press, log puffs to flash
+- [ ] Bluetooth test with no wiring: `firmware/ble_test/` and a phone app
 - [ ] Firmware: Bluetooth service, tested with the nRF Connect app
 - [ ] Web app: connect, sync time, download puffs
 - [ ] Web app: stats and charts
 - [ ] Measure the sleep current and estimate battery life
 - [ ] Mount on the vape (version 1: tape and heat-shrink)
 - [ ] Wear it for a week and review the data
+- [ ] Print the case and check the fit (version 1.5: taped on)
 - [ ] Version 2: 3D-printed clip-on sleeve
 
 ## 9. Safety notes
@@ -201,6 +203,12 @@ Newest entries at the bottom.
 - Made an interactive [3D model](3d-model.html) of the parts on the Aegis Legend 5. It has fitted, exploded and fire-button views, plus a wiring diagram and the parts at real size.
 - The layout puts the FSR flat on the fire button with its tail wrapped round to the back, and the battery on the back panel with the XIAO on top. The whole stack adds about 10 mm to the back.
 - The parts are drawn to real size. The vape's shape, the fire-button position and the FSR tail length are approximate, so check them against the real thing.
+
+### 2026-10-16: A 3D-printed case
+- Designed a two-part [case](../case/README.md) (a tray and a press-fit lid) to print on my Ultimaker 2. It holds the LiPo, the JST socket and the XIAO as one unit, and the FSR wires come in through a slot in the side.
+- It's 29.2 × 55.2 × 8.9 mm when fitted. The parts sit side by side rather than stacked, which keeps it thinner than the layout in the 3D model.
+- The USB-C port sits in a notch in the end wall, so I can charge and upload without opening the case.
+- Next step: print it and check the fit with the loose parts before soldering.
 
 <!-- Template for new entries:
 ### YYYY-MM-DD: Title
