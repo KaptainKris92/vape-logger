@@ -17,10 +17,10 @@ It's also my first hardware engineering project.
 
 ```
 docs/       build journal, wiring notes, photos
-firmware/   Arduino code for the XIAO          (coming soon)
+firmware/   Arduino code for the XIAO
 app/        Web Bluetooth phone app            (coming soon)
 ```
 
 ## Status
 
-🟡 Parts ordered, waiting for delivery.
+🟢 Parts arrived. The board is programmed and blinking.
