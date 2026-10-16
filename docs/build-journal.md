@@ -2,7 +2,7 @@
 
 A record of building a small clip-on device that automatically logs every puff from my vape, plus a phone app to see the data. It covers the background, the decisions, the parts and what happened at each step, including the mistakes.
 
-**Status:** 🟡 Parts ordered, waiting for delivery.
+**Status:** 🟢 Parts arrived. The board is programmed and blinking.
 
 ---
 
@@ -153,8 +153,8 @@ Writing the code is done with Claude Code. **Uploading the firmware** needs the 
 - [x] Research approaches and choose the clip-on design (approach A)
 - [x] Order parts
 - [ ] Buy flux pen (and tape)
-- [ ] Parts arrive: check everything is there and undamaged
-- [ ] **Hello world:** blink the XIAO's LED from the Arduino IDE
+- [x] Parts arrive: check everything is there and undamaged
+- [x] **Hello world:** blink the XIAO's LED from the Arduino IDE
 - [ ] Practise soldering on spare header pins
 - [ ] Solder the JST socket to the battery pads, check polarity, test charging
 - [ ] Wire the FSR and resistor; read presses over USB serial
@@ -186,6 +186,14 @@ Newest entries at the bottom.
 - Two Pi Hut items were unavailable: a JST pigtail cable, replaced with an extension cable I'll cut in half, and a flux pen, which I'll buy from Amazon instead.
 - **Ordered** the parts from The Pi Hut (see [section 5](#5-components)).
 - Set up this repository and journal.
+
+### 2026-10-16: Parts arrived, first blink
+- All six parts from The Pi Hut arrived undamaged.
+- Tested the FSR with the multimeter on the 2M range: it reads over 2 MΩ (shown as `1`) when untouched and about 3 kΩ (0.003) when pressed. With the 100 kΩ pull-down that gives about 3.2 V at D1, so the 100 kΩ resistor stays.
+- Installed the **Seeed nRF52 Boards** package in the Arduino IDE (the index download from Seeed's server was slow) and found the board's port by unplugging and replugging it.
+- Uploaded the Blink example. The factory demo cycled red, green and blue; after the upload only the red LED blinks, which is what Blink does on this board.
+- Wrote `firmware/fsr_test/` to read presses over USB serial, ready for when the FSR is wired.
+- Next step: buy the flux pen, practise soldering, then wire the FSR and run the press test.
 
 <!-- Template for new entries:
 ### YYYY-MM-DD: Title
