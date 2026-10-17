@@ -220,6 +220,9 @@ Newest entries at the bottom.
 - Wrote [How It Works](how-it-works.md): the reasoning behind the 100 kΩ resistor and the pins, plus the soldering steps.
 - Next step: solder the resistor and the FSR wires, then run the press test.
 
+### 2026-10-17: Case views in the 3D model
+- Added three tabs to the [3D model](3d-model.html): the printed case on its own, the parts inside it, and the closed case mounted on the vape. The case is loaded from the real STL files in `case/`, so it matches what gets printed.
+
 <!-- Template for new entries:
 ### YYYY-MM-DD: Title
 - What I did

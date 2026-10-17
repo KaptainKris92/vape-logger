@@ -8,7 +8,7 @@ It's also my first hardware engineering project.
 
 **🔧 Learn [How It Works](docs/how-it-works.md)**: the circuit, why there's a 100 kΩ resistor, what every pin does, and step-by-step soldering instructions.
 
-**🧊 See how it fits in the [3D model](docs/3d-model.html)**: an interactive model of the parts on the vape, with a wiring diagram. GitHub shows the file as code, so download it and open it in a browser to use it.
+**🧊 See how it fits in the [3D model](docs/3d-model.html)**: an interactive model of the wiring, the printed case, the parts inside it, and the case mounted on the vape, with a wiring diagram. GitHub shows the file as code, so download it and open it in a browser to use it.
 
 ## At a glance
 
