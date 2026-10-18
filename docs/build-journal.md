@@ -156,12 +156,12 @@ Writing the code is done with Claude Code. **Uploading the firmware** needs the 
 
 - [x] Research approaches and choose the clip-on design (approach A)
 - [x] Order parts
-- [ ] Buy flux pen (and tape)
+- [x] Buy flux pen (and tape)
 - [x] Parts arrive: check everything is there and undamaged
 - [x] **Hello world:** blink the XIAO's LED from the Arduino IDE
-- [ ] Practise soldering on spare header pins
-- [ ] Solder the JST socket to the battery pads, check polarity, test charging
-- [ ] Wire the FSR and resistor; read presses over USB serial
+- [x] Practise soldering on spare wire and a resistor
+- [x] Solder the JST socket to the battery pads, check polarity, test charging
+- [x] Wire the FSR and resistor; read presses over USB serial
 - [ ] Firmware: deep sleep, wake on press, log puffs to flash
 - [x] Bluetooth test with no wiring: `firmware/ble_test/` and a phone app
 - [ ] Firmware: Bluetooth service, tested with the nRF Connect app
@@ -223,6 +223,18 @@ Newest entries at the bottom.
 ### 2026-10-17: Case views in the 3D model
 - Added three tabs to the [3D model](3d-model.html): the printed case on its own, the parts inside it, and the closed case mounted on the vape. The case is loaded from the real STL files in `case/`, so it matches what gets printed.
 
+### 2026-10-18: Soldered and working on battery
+- Soldered the 100 kΩ resistor from D1 to GND, the FSR wires to 3V3 and D1, and the JST battery lead to the BAT pads. Before soldering the lead, I checked its polarity with the multimeter: it read +3.94 V with red as positive.
+- `fsr_test` reads 0 to 3 untouched and close to 1000 when pressed, and the red LED lights on a press with only the battery connected.
+- What went wrong:
+  - My old iron's barrel nut stripped its thread after a tip change, so I bought a Draper 40 W soldering station from Toolstation.
+  - Solder balled up and wouldn't stick to the new tip, because it had oxidised from sitting hot without solder on it. It came back with brass wool, tip tinner and a coat of fresh solder. Max heat made it worse, not better.
+  - The first GND joint balled on the leg instead of flowing onto the pad. Heating the pad and the leg together with fresh flux fixed it.
+  - A messy 3V3 joint sat close to GND and pad 10, so I checked them with the multimeter on 200k before plugging in. They read 80 to 100 kΩ and 55 kΩ respectively, so nothing was bridged.
+  - `fsr_test` failed to link with "undefined reference to `Serial`". The fix was adding `#include <Adafruit_TinyUSB.h>` at the top.
+  - The port disappeared from the IDE once. **Tools > Reload board data** brought it back.
+- Next step: print the case, then start the main firmware (deep sleep, puff logging, Bluetooth and battery level).
+
 <!-- Template for new entries:
 ### YYYY-MM-DD: Title
 - What I did
@@ -238,6 +250,10 @@ Newest entries at the bottom.
 - Keep Arduino sketches in a folder path with no spaces. The nRF52 toolchain can't cope with them.
 - If the XIAO disappears from the PC, double-tap reset to get into the bootloader.
 - Shop stock changes quickly. Have a backup option for small parts.
+- Keep the iron's tip tinned: wipe it on brass wool, add a little solder before each joint, and leave a blob on it in the stand. A dull or black tip won't take solder at any temperature.
+- Slide heat-shrink on *before* soldering both ends of a wire.
+- Measure for shorts between neighbouring pads (GND and 3V3 especially) before plugging in USB.
+- If the board's port vanishes in the Arduino IDE, try **Tools > Reload board data** before the double-tap reset.
 
 ## 12. Ideas for later
 
