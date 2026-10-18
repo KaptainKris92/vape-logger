@@ -10,6 +10,10 @@
 // Board: Seeed nRF52 Boards > Seeed XIAO nRF52840
 // Open Tools > Serial Monitor (115200 baud) or Tools > Serial Plotter.
 
+// Serial comes from the TinyUSB library on this core. Without this include the
+// IDE can fail to link it ("undefined reference to `Serial'").
+#include <Adafruit_TinyUSB.h>
+
 const int FSR_PIN = A1;          // same physical pin as D1
 const int PRESS_THRESHOLD = 500; // 0-1023; tune this from the readings
 
