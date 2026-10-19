@@ -24,6 +24,16 @@ export class VaperTaper extends EventTarget {
     this.wanted = false;      // keep reconnecting after a drop
     this.transfer = null;     // { records: [], timer }
     this.getNext = () => 0;   // set by the app: next index wanted for a log id
+    // After this many failed reconnects, drop the device and start from a fresh
+    // lookup, which clears a bad service list on Windows. Only worth it where
+    // something calls choose() again without a click (the Windows app).
+    this.freshLookupAfter = Infinity;
+    this.attempt = 0;
+    this.listening = new WeakSet();  // devices that already have a disconnect listener
+    // Added once, so reconnecting doesn't stack up duplicate listeners.
+    this.onLogDataEvent = (e) => this.onLogData(e.target.value);
+    this.onStatusEvent = (e) => this.onStatus(e.target.value);
+    this.onBatteryEvent = (e) => this.onBattery(e.target.value.getUint8(0));
   }
 
   setState(state) {
@@ -59,9 +69,11 @@ export class VaperTaper extends EventTarget {
   }
 
   use(device) {
-    if (this.device === device) return;
     this.device = device;
+    if (this.listening.has(device)) return;
+    this.listening.add(device);
     device.addEventListener('gattserverdisconnected', () => {
+      if (this.device !== device) return;  // an old, dropped device
       this.transfer = null;
       this.setState('disconnected');
       if (this.wanted) setTimeout(() => this.connectLoop(), 2000);
@@ -77,16 +89,32 @@ export class VaperTaper extends EventTarget {
     if (this.looping) return;
     this.looping = true;
     let wait = 3000;
+    let failures = 0;
     try {
       while (this.wanted && this.state !== 'connected') {
+        const attempt = ++this.attempt;
+        let timer;
         try {
-          await this.connectOnce();
+          // A connect can hang for ever on Windows; give up after 30 s.
+          await Promise.race([
+            this.connectOnce(attempt),
+            new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('timed out after 30 s')), 30000); }),
+          ]);
         } catch (e) {
+          this.attempt++;  // makes a late-finishing attempt stand down
           console.warn('Connect failed:', e.message);
           if (this.device.gatt.connected) this.device.gatt.disconnect();
           this.setState('disconnected');
+          if (++failures >= this.freshLookupAfter) {
+            console.warn('Starting again with a fresh device lookup');
+            this.wanted = false;
+            this.device = null;
+            return;
+          }
           await new Promise((r) => setTimeout(r, wait));
           wait = Math.min(wait * 2, 30000);
+        } finally {
+          clearTimeout(timer);
         }
       }
     } finally {
@@ -94,7 +122,7 @@ export class VaperTaper extends EventTarget {
     }
   }
 
-  async connectOnce() {
+  async connectOnce(attempt) {
     this.setState('connecting');
     // After a refresh, Chrome and Edge can only connect once they've heard the
     // device advertise, so wait for that (or give up waiting after 10 s).
@@ -122,15 +150,15 @@ export class VaperTaper extends EventTarget {
       logData: await svc.getCharacteristic(LOG_DATA),
     };
 
-    this.chars.logData.addEventListener('characteristicvaluechanged', (e) => this.onLogData(e.target.value));
+    this.chars.logData.addEventListener('characteristicvaluechanged', this.onLogDataEvent);
     await this.chars.logData.startNotifications();
-    this.chars.status.addEventListener('characteristicvaluechanged', (e) => this.onStatus(e.target.value));
+    this.chars.status.addEventListener('characteristicvaluechanged', this.onStatusEvent);
     await this.chars.status.startNotifications();
 
     try {
       const bas = await server.getPrimaryService('battery_service');
       const level = await bas.getCharacteristic('battery_level');
-      level.addEventListener('characteristicvaluechanged', (e) => this.onBattery(e.target.value.getUint8(0)));
+      level.addEventListener('characteristicvaluechanged', this.onBatteryEvent);
       await level.startNotifications();
       this.onBattery((await level.readValue()).getUint8(0));
     } catch (e) {
@@ -138,6 +166,7 @@ export class VaperTaper extends EventTarget {
     }
 
     await this.syncTime();
+    if (attempt !== this.attempt) throw new Error('superseded by a newer attempt');
     this.setState('connected');
     this.onStatus(await this.chars.status.readValue());
   }

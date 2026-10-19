@@ -249,6 +249,12 @@ Newest entries at the bottom.
 - After a refresh, Edge asked me to pick the device again. Reconnecting without asking needs the **Experimental Web Platform features** flag. Edge 155 no longer has the "new permissions backend" flag that older guides mention.
 - Rather than rely on browser flags, I wrapped the same app in Electron (`desktop/`). It picks the device by itself, stays in the tray, and starts with Windows. On its first run it connected, set the clock and downloaded all six test puffs.
 
+### 2026-10-19: Stuck on "Connecting…"
+- After about 49 minutes the tray app lost the device and stayed on "Connecting…" for good. The device was fine: it was still advertising and answered when I connected with another tool.
+- On reconnect, Windows sometimes reports the device's services without the Vaper Taper one, and a connect attempt can hang with no error. The app kept retrying the same way and never recovered.
+- Fixed in the app: each attempt now times out after 30 s, and after three failures the Windows app starts again from a fresh device lookup, as a restart would. Reconnecting also no longer adds duplicate listeners. Tested with a simulated drop, and with a hang followed by two failures.
+- Still unknown: why the link dropped in the first place.
+
 <!-- Template for new entries:
 ### YYYY-MM-DD: Title
 - What I did
@@ -268,6 +274,7 @@ Newest entries at the bottom.
 - Slide heat-shrink on *before* soldering both ends of a wire.
 - Measure for shorts between neighbouring pads (GND and 3V3 especially) before plugging in USB.
 - If the board's port vanishes in the Arduino IDE, try **Tools > Reload board data** before the double-tap reset.
+- Windows Bluetooth can return an incomplete list of a device's services on reconnect. Don't assume a failed connect will succeed if retried the same way.
 - Phone photos carry GPS coordinates in their EXIF data. Remove them before putting photos in a public repo or blog.
 
 ## 12. Ideas for later
