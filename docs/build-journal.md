@@ -268,6 +268,7 @@ Newest entries at the bottom.
 - Slide heat-shrink on *before* soldering both ends of a wire.
 - Measure for shorts between neighbouring pads (GND and 3V3 especially) before plugging in USB.
 - If the board's port vanishes in the Arduino IDE, try **Tools > Reload board data** before the double-tap reset.
+- Phone photos carry GPS coordinates in their EXIF data. Remove them before putting photos in a public repo or blog.
 
 ## 12. Ideas for later
 
