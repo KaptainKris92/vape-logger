@@ -38,6 +38,7 @@ The owner is new to hardware. They use **Windows** and the **Arduino IDE 2** (no
 
 - Each sketch lives in its own folder under `firmware/` with a matching `.ino` name.
 - Record progress as a dated entry in `docs/build-journal.md` (section 10), tick milestones in section 8, and add hard-won tips to "Lessons learned".
+- The repo is public. Phone photos contain GPS coordinates in their EXIF data, so remove them (without re-compressing the image) before committing any photo.
 - Writing style in docs: plain British English, short sentences, no em-dashes.
 - There is no CI for firmware. The Seeed core is installed on the owner's PC, so a sketch can be compile-checked with a downloaded `arduino-cli` and `--config-file ~/.arduinoIDE/arduino-cli.yaml --fqbn Seeeduino:nrf52:xiaonRF52840`, from a copy in a path with no spaces. Behaviour is still verified by the owner on the device.
 - App logic tests: `node --test app/tests/stats.test.mjs`.
