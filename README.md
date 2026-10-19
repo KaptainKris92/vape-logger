@@ -28,4 +28,4 @@ app/        Web Bluetooth phone app            (coming soon)
 
 ## Status
 
-🟢 Parts arrived. The board is programmed and blinking.
+🟢 Hardware soldered and working on battery: presses read cleanly over USB. Next: the main firmware.
