@@ -16,12 +16,13 @@ There's no build step: it's plain HTML, CSS and JavaScript.
 
 ## Reconnecting after a refresh
 
-Chrome only lets a page reconnect to a device without asking if two flags are on. Without them, you click **Connect** after every refresh. On each browser:
+Edge and Chrome only let a page reconnect to a device without asking if a flag is on. Without it, you click **Connect** after every refresh. On each browser:
 
-1. Open `chrome://flags` (or `edge://flags`).
-2. Turn on **Use the new permissions backend for Web Bluetooth** (`#enable-web-bluetooth-new-permissions-backend`).
-3. Turn on **Experimental Web Platform features** (`#enable-experimental-web-platform-features`).
-4. Restart the browser, then connect once more. After that the app reconnects by itself, including after a refresh or when the device comes back into range.
+1. Open `edge://flags` (or `chrome://flags`).
+2. Turn on **Experimental Web Platform features** (`#enable-experimental-web-platform-features`).
+3. Restart the browser, then connect once more. After that the app reconnects by itself, including after a refresh or when the device comes back into range.
+
+Older versions also needed **Use the new permissions backend for Web Bluetooth**. Edge 155 no longer has that flag, and doesn't need it.
 
 **Settings > Device** shows a reminder while the flags are off.
 
