@@ -147,8 +147,8 @@ All the code lives in this repository.
 | Part | Tech | Notes |
 |---|---|---|
 | **Firmware** (`firmware/`) | Arduino (Seeed nRF52 board package) | Deep sleep and wake on press. Ring buffer of puffs in flash. Custom Bluetooth LE service for time sync and log download. |
-| **App** (`app/`) | Plain HTML and JavaScript, Web Bluetooth | Runs in Chrome on Android. Hosted for free on GitHub Pages (Web Bluetooth needs https). Can be added to the home screen. |
-| **Data** | Stored on the phone | Nothing goes to a server unless I choose to add that later. |
+| **App** (`app/`) | Plain HTML and JavaScript, Web Bluetooth | One installable app for Chrome or Edge on my PC and Chrome on Android. Hosted for free on GitHub Pages (Web Bluetooth needs https). |
+| **Data** | Stored in each browser | Nothing goes to a server unless I choose to add that later. |
 
 Writing the code is done with Claude Code. **Uploading the firmware** needs the XIAO plugged into a computer over USB-C, using the Arduino IDE or `arduino-cli`, or Claude Code running locally.
 
@@ -162,11 +162,12 @@ Writing the code is done with Claude Code. **Uploading the firmware** needs the 
 - [x] Practise soldering on spare wire and a resistor
 - [x] Solder the JST socket to the battery pads, check polarity, test charging
 - [x] Wire the FSR and resistor; read presses over USB serial
-- [ ] Firmware: deep sleep, wake on press, log puffs to flash
+- [x] Firmware: low-power sleep, log puffs to flash
 - [x] Bluetooth test with no wiring: `firmware/ble_test/` and a phone app
 - [ ] Firmware: Bluetooth service, tested with the nRF Connect app
-- [ ] Web app: connect, sync time, download puffs
-- [ ] Web app: stats and charts
+- [x] Web app: connect, sync time, download puffs
+- [ ] Web app: stats, achievements and buddy (written, needs testing)
+- [ ] Install the tray app on the PC and the web app on the phone
 - [ ] Measure the sleep current and estimate battery life
 - [ ] Mount on the vape (version 1: tape and heat-shrink)
 - [ ] Wear it for a week and review the data
@@ -235,6 +236,19 @@ Newest entries at the bottom.
   - The port disappeared from the IDE once. **Tools > Reload board data** brought it back.
 - Next step: print the case, then start the main firmware (deep sleep, puff logging, Bluetooth and battery level).
 
+### 2026-10-19: Main firmware and the app, written but not yet tested
+- Wrote `firmware/vaper_taper/`. It logs each press with its start time and length, keeps the last 2048 in flash, and sends them over Bluetooth with the battery level. It compiles against the Seeed core.
+- Changed plan: the board sleeps in **System ON** and checks the FSR every 50 ms, rather than System OFF. System OFF stops the clock, so a press that woke the board wouldn't know what time it was, and the board couldn't advertise for the app to connect.
+- The board accepts two connections at once, so my PC and my phone can both stay connected. Each downloads the whole log, so they show the same history.
+- Wrote the app in `app/`: one web app for the PC and the phone that can be installed like a normal app. It shows the time since my last puff, my record, the battery, achievements, a buddy that levels up with XP, and a log with day and night counts.
+- Nights (01:00 to 08:00 by default, changeable per night) don't count towards streaks, because not vaping while asleep isn't really abstaining. Night puffs are counted separately.
+- Next step: upload the firmware and test it with the app.
+
+### 2026-10-19: It works, and a Windows tray app
+- Uploaded the firmware and connected from the app in Edge. Presses show up in the app straight away, with the battery level.
+- After a refresh, Edge asked me to pick the device again. Reconnecting without asking needs the **Experimental Web Platform features** flag. Edge 155 no longer has the "new permissions backend" flag that older guides mention.
+- Rather than rely on browser flags, I wrapped the same app in Electron (`desktop/`). It picks the device by itself, stays in the tray, and starts with Windows. On its first run it connected, set the clock and downloaded all six test puffs.
+
 <!-- Template for new entries:
 ### YYYY-MM-DD: Title
 - What I did
@@ -254,6 +268,7 @@ Newest entries at the bottom.
 - Slide heat-shrink on *before* soldering both ends of a wire.
 - Measure for shorts between neighbouring pads (GND and 3V3 especially) before plugging in USB.
 - If the board's port vanishes in the Arduino IDE, try **Tools > Reload board data** before the double-tap reset.
+- Phone photos carry GPS coordinates in their EXIF data. Remove them before putting photos in a public repo or blog.
 
 ## 12. Ideas for later
 

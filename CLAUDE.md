@@ -26,12 +26,19 @@ The owner is new to hardware. They use **Windows** and the **Arduino IDE 2** (no
 ## Decisions so far
 
 - **BLE advertised name:** `VaperTaper`. `firmware/ble_test` still uses the old name "VapeLogger".
-- **Firmware plan:** deep sleep with wake on press, a ring buffer of timestamped puffs in flash, a custom BLE service for time sync and log download, and the standard Battery Service (`BLEBas`) for battery %.
-- **App plan:** plain HTML/JS Web Bluetooth page in `app/`, for Chrome on Android, hosted on GitHub Pages. It shows battery % with a low-battery warning (~20%). Data stays on the phone.
+- **Firmware:** `firmware/vaper_taper/`. It polls D1 every 50 ms in System ON sleep, not System OFF, because System OFF stops the clock and the radio. Puffs go into chunk files in InternalFS (last 2048 kept). A custom BLE service handles time sync and log download, plus the standard Battery Service (`BLEBas`). The protocol is documented at the top of the sketch, and `app/js/ble.js` must match it.
+- **Time:** the app writes Unix time on every connect. Puffs before the first sync after a reset wait in RAM, then get saved with the right time.
+- **Two connections:** the device accepts a PC and a phone at once. Each downloads the full log from its own saved index, keyed by a random log id that changes if the flash is wiped.
+- **App:** one installable web app (PWA) in `app/` for Chrome/Edge on Windows and Chrome on Android, published to GitHub Pages by `.github/workflows/pages.yml`. Plain HTML/JS, no build step. Data stays in each browser's localStorage. It shows battery % with a low-battery warning at 20%.
+- **Windows app:** `desktop/` wraps `app/` in Electron (pinned versions) for a tray app that starts with Windows. It serves `app/` on a private `vapertaper://` scheme, auto-selects the device in `select-bluetooth-device`, and calls `window.vaperTaperAutoConnect()` with a simulated user gesture every 30 s. Keep `app/` working in both the browser and Electron. Build with `npm run dist` in `desktop/`.
+- **Night rules:** nights default to 01:00 to 08:00 and can be changed per night. Night time doesn't count towards streaks, XP or achievements, night puffs are counted separately, and every puff (night included) restarts the streak.
+- **Surprises:** the owner doesn't want to see buddy evolutions, later shop items or locked achievements. Never describe them in chat, docs or commit messages. They live only in `app/js/companion.js` (marked as spoilers) and `app/js/stats.js`.
 
 ## Repo conventions
 
 - Each sketch lives in its own folder under `firmware/` with a matching `.ino` name.
 - Record progress as a dated entry in `docs/build-journal.md` (section 10), tick milestones in section 8, and add hard-won tips to "Lessons learned".
+- The repo is public. Phone photos contain GPS coordinates in their EXIF data, so remove them (without re-compressing the image) before committing any photo.
 - Writing style in docs: plain British English, short sentences, no em-dashes.
-- There is no CI; firmware can't be compiled here without the Seeed core, so changes are verified by the owner on the device.
+- There is no CI for firmware. The Seeed core is installed on the owner's PC, so a sketch can be compile-checked with a downloaded `arduino-cli` and `--config-file ~/.arduinoIDE/arduino-cli.yaml --fqbn Seeeduino:nrf52:xiaonRF52840`, from a copy in a path with no spaces. Behaviour is still verified by the owner on the device.
+- App logic tests: `node --test app/tests/stats.test.mjs`.

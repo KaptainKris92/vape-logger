@@ -15,7 +15,7 @@ It's also my first hardware engineering project.
 - **Sensor:** a force-sensitive resistor on the fire button
 - **Brain:** Seeed XIAO nRF52840 (Bluetooth LE, deep sleep, LiPo charging)
 - **Power:** 150 mAh LiPo, charged over USB-C
-- **App:** a Web Bluetooth page in Chrome on Android, hosted on GitHub Pages
+- **App:** an installable Web Bluetooth app for Chrome/Edge on Windows and Chrome on Android, hosted on GitHub Pages ([app/README.md](app/README.md))
 
 ## Repository layout
 
@@ -23,9 +23,10 @@ It's also my first hardware engineering project.
 docs/       build journal, 3D fit model, wiring notes, photos
 case/       3D-printable case (STL files and the script that makes them)
 firmware/   Arduino code for the XIAO
-app/        Web Bluetooth phone app            (coming soon)
+app/        Vaper Taper app for PC and phone (Web Bluetooth)
+desktop/    Windows tray app: app/ wrapped in Electron
 ```
 
 ## Status
 
-🟢 Hardware soldered and working on battery: presses read cleanly over USB. Next: the main firmware.
+🟡 Main firmware and app written. Next: upload and test them together.

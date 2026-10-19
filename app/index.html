@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en-GB" data-mode="day">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Vaper Taper</title>
+  <meta name="description" content="Taper the vaper: logs every puff from the Vaper Taper device.">
+  <meta name="theme-color" content="#2f9e44">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <img src="icons/icon.svg" alt="" width="36" height="36">
+      <div>
+        <h1>Vaper Taper</h1>
+        <p class="tagline">Taper the vaper</p>
+      </div>
+    </div>
+    <div class="device">
+      <span id="battery" class="chip" hidden></span>
+      <button id="connect" class="chip conn" data-state="disconnected">Connect</button>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Sections">
+    <button data-view="home" aria-current="page"><span aria-hidden="true">🏠</span> Home</button>
+    <button data-view="awards"><span aria-hidden="true">🏆</span> Awards</button>
+    <button data-view="buddy"><span aria-hidden="true">🌱</span> Buddy</button>
+    <button data-view="log"><span aria-hidden="true">📅</span> Log</button>
+    <button data-view="settings"><span aria-hidden="true">⚙️</span> Settings</button>
+  </nav>
+
+  <main>
+    <p id="unsupported" class="banner warn" hidden>
+      This browser can't use Bluetooth. Open the app in Chrome or Edge on Windows or Android.
+    </p>
+    <p id="low-battery" class="banner warn" hidden></p>
+
+    <section id="view-home" class="view">
+      <div id="mode-banner" class="banner"></div>
+
+      <div class="card streak">
+        <p class="label">Vape-free (awake time)</p>
+        <p id="streak" class="big">–</p>
+        <p id="streak-sub" class="sub"></p>
+        <p id="stale" class="sub stale" hidden></p>
+      </div>
+
+      <div class="grid">
+        <div class="card buddy-card">
+          <div id="home-buddy" class="buddy-art"></div>
+          <div>
+            <p class="buddy-name"><span id="home-name"></span></p>
+            <p class="sub"><span id="home-level"></span></p>
+            <div class="bar"><div id="home-xpbar"></div></div>
+            <p class="sub"><span id="home-xp"></span> · <span id="home-coins"></span></p>
+          </div>
+        </div>
+
+        <div class="card">
+          <p class="label">Record</p>
+          <p id="record" class="mid">–</p>
+          <p class="label">Today (daytime)</p>
+          <p class="mid"><span id="today-count">0</span> <span class="sub">puffs</span></p>
+          <p class="label">Last night</p>
+          <p class="mid"><span id="night-count">0</span> <span class="sub">puffs</span></p>
+          <p class="sub"><span id="night-times"></span> <button id="edit-last-night" class="link">Change bedtime</button></p>
+        </div>
+
+        <div class="card">
+          <p class="label">Next achievement</p>
+          <p id="next-title" class="mid"></p>
+          <p id="next-detail" class="sub"></p>
+          <div class="bar"><div id="next-bar"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-awards" class="view" hidden>
+      <h2>Achievements</h2>
+      <ul id="awards" class="list"></ul>
+    </section>
+
+    <section id="view-buddy" class="view" hidden>
+      <div class="card buddy-big">
+        <div id="buddy-art" class="buddy-art big"></div>
+        <p class="buddy-name" id="buddy-name"></p>
+        <p class="sub" id="buddy-level"></p>
+        <div class="bar"><div id="buddy-xpbar"></div></div>
+        <p class="sub" id="buddy-xp"></p>
+        <p class="coins" id="buddy-coins"></p>
+      </div>
+      <h2>Wardrobe</h2>
+      <div id="wardrobe" class="items"></div>
+      <h2>Shop</h2>
+      <div id="shop" class="items"></div>
+      <p class="sub">New items appear as you level up.</p>
+    </section>
+
+    <section id="view-log" class="view" hidden>
+      <h2>Log</h2>
+      <p class="sub">Each night runs from bedtime to wake-up. Puffs in that window are counted separately, and the time doesn't count towards streaks. Change a night's times if you were up late or slept in.</p>
+      <div id="log"></div>
+      <button id="log-more" class="secondary" hidden>Show older days</button>
+    </section>
+
+    <section id="view-settings" class="view" hidden>
+      <h2>Settings</h2>
+      <div class="card form">
+        <label>Usual bedtime <input type="time" id="set-bed"></label>
+        <label>Usual wake-up <input type="time" id="set-wake"></label>
+        <p class="sub">Used for every night you haven't changed. Bedtimes from midday onwards count as the evening before.</p>
+        <label>Buddy's name <input type="text" id="set-name" maxlength="20"></label>
+      </div>
+
+      <h2>Device</h2>
+      <div class="card">
+        <dl id="device-info" class="info"></dl>
+        <p id="reconnect-hint" class="sub" hidden>
+          To reconnect automatically after a refresh, open <code>edge://flags</code> (or <code>chrome://flags</code>),
+          turn on <strong>Experimental Web Platform features</strong>, restart the browser and connect once more.
+        </p>
+        <button id="disconnect" class="secondary">Disconnect</button>
+      </div>
+
+      <h2>Backup</h2>
+      <div class="card">
+        <p class="sub">The PC and the phone each keep their own copy. Both download every puff from the device, but bedtimes and the wardrobe don't move between them. Download a backup on one and import it on the other to combine them.</p>
+        <div class="row">
+          <button id="export" class="secondary">Download backup</button>
+          <label class="button secondary">Import backup <input type="file" id="import" accept="application/json,.json" hidden></label>
+        </div>
+      </div>
+
+      <h2>Danger zone</h2>
+      <div class="card">
+        <button id="reset" class="danger">Forget all data on this device</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="toasts" aria-live="polite"></div>
+
+  <dialog id="night-dialog">
+    <form method="dialog">
+      <h3 id="night-title">Night</h3>
+      <label>Bedtime <input type="time" id="night-bed" required></label>
+      <label>Woke up <input type="time" id="night-wake" required></label>
+      <p class="sub">Bedtimes from midday onwards count as the evening before.</p>
+      <div class="row">
+        <button value="default" class="secondary">Use usual times</button>
+        <button value="cancel" class="secondary">Cancel</button>
+        <button value="save">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="evolve-dialog">
+    <div class="evolve">
+      <p id="evolve-text" class="mid">Something is happening…</p>
+      <div id="evolve-art" class="buddy-art big"></div>
+      <button id="evolve-ok" hidden>Wonderful!</button>
+    </div>
+  </dialog>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
