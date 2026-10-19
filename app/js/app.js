@@ -12,6 +12,8 @@ const LOW_BATTERY = 20;
 
 const device = new VaperTaper();
 const isDesktop = navigator.userAgent.includes('Electron');  // the Windows app in desktop/
+if (isDesktop) device.freshLookupAfter = 3;
+window.vaperTaper = device;  // handy for checking the connection from DevTools
 let inSync = false;   // connected and the whole log is downloaded
 let stats = null;     // from computeStats(); refreshed every minute and on changes
 let logDays = 14;
