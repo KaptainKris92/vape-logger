@@ -14,6 +14,17 @@ There's no build step: it's plain HTML, CSS and JavaScript.
 - **PC (Chrome or Edge):** open the page, then click the install icon at the right of the address bar (or **⋮ > Cast, save and share > Install page as app**). It gets a Start menu entry and its own window.
 - **Android (Chrome):** open the page, then **⋮ > Add to home screen > Install**.
 
+## Reconnecting after a refresh
+
+Chrome only lets a page reconnect to a device without asking if two flags are on. Without them, you click **Connect** after every refresh. On each browser:
+
+1. Open `chrome://flags` (or `edge://flags`).
+2. Turn on **Use the new permissions backend for Web Bluetooth** (`#enable-web-bluetooth-new-permissions-backend`).
+3. Turn on **Experimental Web Platform features** (`#enable-experimental-web-platform-features`).
+4. Restart the browser, then connect once more. After that the app reconnects by itself, including after a refresh or when the device comes back into range.
+
+**Settings > Device** shows a reminder while the flags are off.
+
 ## Using it on both
 
 - The device can be connected to the PC and the phone at the same time. Each one downloads the whole log, so they show the same puffs.
