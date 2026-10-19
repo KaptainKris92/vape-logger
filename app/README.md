@@ -6,6 +6,8 @@ There's no build step: it's plain HTML, CSS and JavaScript.
 
 ## Where it lives
 
+- **On Windows, the easiest way:** the tray app in [`../desktop`](../desktop/README.md). It's this same app, but it connects by itself, stays in the tray and starts with Windows.
+
 - **Online:** GitHub Pages publishes this folder at <https://kaptainkris92.github.io/vape-logger/> whenever `app/` changes on `main`. Turn this on once in the repo's **Settings > Pages > Source: GitHub Actions**.
 - **On the PC without GitHub:** open a terminal in this folder and run `python -m http.server 8000`, then go to <http://localhost:8000>. Web Bluetooth needs https, but `localhost` counts as safe.
 

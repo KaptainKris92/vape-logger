@@ -11,6 +11,7 @@ const MIN = 60000;
 const LOW_BATTERY = 20;
 
 const device = new VaperTaper();
+const isDesktop = navigator.userAgent.includes('Electron');  // the Windows app in desktop/
 let inSync = false;   // connected and the whole log is downloaded
 let stats = null;     // from computeStats(); refreshed every minute and on changes
 let logDays = 14;
@@ -309,7 +310,7 @@ function renderSettings() {
   if (d.unknownTime) rows.push(['Puffs with no time', `${d.unknownTime} (logged before the clock was set, not counted)`]);
   $('device-info').innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${escapeHtml(v)}</dd>`).join('');
   $('disconnect').hidden = device.state === 'disconnected';
-  $('reconnect-hint').hidden = !supported || !!navigator.bluetooth.getDevices;
+  $('reconnect-hint').hidden = !supported || !!navigator.bluetooth.getDevices || isDesktop;
 }
 
 function renderBattery() {
@@ -503,4 +504,11 @@ if (!supported) {
   device.reconnectKnown().catch((e) => console.warn('No auto-reconnect:', e.message));
 }
 
-if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+// The Windows app calls this every 30 s. It picks the device itself, so
+// there's no picker.
+window.vaperTaperAutoConnect = () => {
+  if (!supported || device.wanted || device.state !== 'disconnected') return;
+  device.choose().catch(() => {});
+};
+
+if (!isDesktop && 'serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});

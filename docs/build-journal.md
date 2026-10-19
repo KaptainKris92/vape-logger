@@ -162,12 +162,12 @@ Writing the code is done with Claude Code. **Uploading the firmware** needs the 
 - [x] Practise soldering on spare wire and a resistor
 - [x] Solder the JST socket to the battery pads, check polarity, test charging
 - [x] Wire the FSR and resistor; read presses over USB serial
-- [ ] Firmware: low-power sleep, log puffs to flash (written, needs testing)
+- [x] Firmware: low-power sleep, log puffs to flash
 - [x] Bluetooth test with no wiring: `firmware/ble_test/` and a phone app
 - [ ] Firmware: Bluetooth service, tested with the nRF Connect app
-- [ ] Web app: connect, sync time, download puffs (written, needs testing)
+- [x] Web app: connect, sync time, download puffs
 - [ ] Web app: stats, achievements and buddy (written, needs testing)
-- [ ] Install the app on the PC and the phone
+- [ ] Install the tray app on the PC and the web app on the phone
 - [ ] Measure the sleep current and estimate battery life
 - [ ] Mount on the vape (version 1: tape and heat-shrink)
 - [ ] Wear it for a week and review the data
@@ -243,6 +243,11 @@ Newest entries at the bottom.
 - Wrote the app in `app/`: one web app for the PC and the phone that can be installed like a normal app. It shows the time since my last puff, my record, the battery, achievements, a buddy that levels up with XP, and a log with day and night counts.
 - Nights (01:00 to 08:00 by default, changeable per night) don't count towards streaks, because not vaping while asleep isn't really abstaining. Night puffs are counted separately.
 - Next step: upload the firmware and test it with the app.
+
+### 2026-10-19: It works, and a Windows tray app
+- Uploaded the firmware and connected from the app in Edge. Presses show up in the app straight away, with the battery level.
+- After a refresh, Edge asked me to pick the device again. Reconnecting without asking needs the **Experimental Web Platform features** flag. Edge 155 no longer has the "new permissions backend" flag that older guides mention.
+- Rather than rely on browser flags, I wrapped the same app in Electron (`desktop/`). It picks the device by itself, stays in the tray, and starts with Windows. On its first run it connected, set the clock and downloaded all six test puffs.
 
 <!-- Template for new entries:
 ### YYYY-MM-DD: Title

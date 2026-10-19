@@ -24,6 +24,7 @@ docs/       build journal, 3D fit model, wiring notes, photos
 case/       3D-printable case (STL files and the script that makes them)
 firmware/   Arduino code for the XIAO
 app/        Vaper Taper app for PC and phone (Web Bluetooth)
+desktop/    Windows tray app: app/ wrapped in Electron
 ```
 
 ## Status
