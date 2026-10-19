@@ -24,7 +24,7 @@ Edge and Chrome only let a page reconnect to a device without asking if a flag i
 
 Older versions also needed **Use the new permissions backend for Web Bluetooth**. Edge 155 no longer has that flag, and doesn't need it.
 
-**Settings > Device** shows a reminder while the flags are off.
+**Settings > Device** shows a reminder while the flag is off.
 
 ## Using it on both
 
