@@ -33,8 +33,12 @@ export class VaperTaper extends EventTarget {
 
   // Reconnects to a device this browser has used before, without a prompt.
   async reconnectKnown() {
-    if (!navigator.bluetooth.getDevices) return false;
+    if (!navigator.bluetooth.getDevices) {
+      console.info('Auto-reconnect is off: getDevices() is not available. See Settings > Device.');
+      return false;
+    }
     const devices = await navigator.bluetooth.getDevices();
+    console.info(`Auto-reconnect: ${devices.length} remembered device(s)`, devices.map((d) => d.name));
     const device = devices.find((d) => d.name === 'VaperTaper');
     if (!device) return false;
     this.use(device);
@@ -92,9 +96,22 @@ export class VaperTaper extends EventTarget {
 
   async connectOnce() {
     this.setState('connecting');
-    // Some browsers can only connect once they've heard the device advertise.
-    if (this.device.watchAdvertisements && !this.device.watchingAdvertisements) {
-      try { await this.device.watchAdvertisements(); } catch { /* not needed everywhere */ }
+    // After a refresh, Chrome and Edge can only connect once they've heard the
+    // device advertise, so wait for that (or give up waiting after 10 s).
+    if (this.device.watchAdvertisements) {
+      const stop = new AbortController();
+      try {
+        const heard = new Promise((resolve) => {
+          this.device.addEventListener('advertisementreceived', resolve, { once: true });
+          setTimeout(resolve, 10000);
+        });
+        await this.device.watchAdvertisements({ signal: stop.signal });
+        await heard;
+      } catch (e) {
+        console.warn('Could not watch for adverts:', e.message);
+      } finally {
+        stop.abort();
+      }
     }
     const server = await this.device.gatt.connect();
     const svc = await server.getPrimaryService(SERVICE);
