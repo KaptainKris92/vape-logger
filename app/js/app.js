@@ -309,6 +309,7 @@ function renderSettings() {
   if (d.unknownTime) rows.push(['Puffs with no time', `${d.unknownTime} (logged before the clock was set, not counted)`]);
   $('device-info').innerHTML = rows.map(([k, v]) => `<dt>${k}</dt><dd>${escapeHtml(v)}</dd>`).join('');
   $('disconnect').hidden = device.state === 'disconnected';
+  $('reconnect-hint').hidden = !supported || !!navigator.bluetooth.getDevices;
 }
 
 function renderBattery() {
