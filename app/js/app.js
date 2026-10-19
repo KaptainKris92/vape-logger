@@ -2,7 +2,7 @@ import * as store from './store.js';
 import { VaperTaper, supported } from './ble.js';
 import {
   ACHIEVEMENTS, awakeMs, computeStats, dateKey, gapXp, levelInfo, nextAchievement,
-  nightAt, nightTimes, shiftKey,
+  nightAt, nightTimes, nightWindow, shiftKey,
 } from './stats.js';
 import { ITEMS, SLOTS, STAGES, companionSvg, stageFor } from './companion.js';
 
@@ -17,6 +17,7 @@ window.vaperTaper = device;  // handy for checking the connection from DevTools
 let inSync = false;   // connected and the whole log is downloaded
 let stats = null;     // from computeStats(); refreshed every minute and on changes
 let logDays = 14;
+const openDays = new Set();  // log days the reader has expanded, kept across re-renders
 
 // ---------- Formatting ----------
 
@@ -258,16 +259,86 @@ function renderBuddy(stage, lv, sleeping) {
     : '<p class="sub">Nothing for sale right now.</p>';
 }
 
+// A day in the log runs from one night's bedtime to the next, so it holds
+// that night's puffs and the day after it.
+function logDayKey(t, d) {
+  const night = nightAt(t, d.settings, d.nights);
+  if (night) return night.key;
+  const k = dateKey(t);
+  return t < nightWindow(k, d.settings, d.nights).start ? shiftKey(k, -1) : k;
+}
+
+const HOUR = 3600000;
+const hourLabel = (t) => `${String(new Date(t).getHours()).padStart(2, '0')}:00`;
+const nextHour = (t) => { const x = new Date(t); x.setHours(x.getHours() + 1); return x.getTime(); };
+
+// Puffs per hour across one log day, with the night shaded and the day's
+// longest gap marked. The exact times stay in "Show times" underneath.
+function dayChart(key, puffs, d) {
+  const night = nightWindow(key, d.settings, d.nights);
+  const nextNight = nightWindow(shiftKey(key, 1), d.settings, d.nights);
+  const start = new Date(night.start).setMinutes(0, 0, 0);
+  const end = new Date(nextNight.start + HOUR - 1).setMinutes(0, 0, 0);
+  const now = Date.now();
+  const P = (t) => ((t - start) / (end - start)) * 100;
+
+  const bins = [];
+  for (let t = start; t < end; t = nextHour(t)) {
+    const inBin = puffs.filter((p) => p.t >= t && p.t < nextHour(t));
+    bins.push({ t, count: inBin.length, night: inBin.filter((p) => p.night).length });
+  }
+  const yMax = Math.max(1, ...bins.map((b) => b.count));
+
+  // Longest gap in the awake part of the day (up to now, for today).
+  const dayEnd = Math.min(nextNight.start, stats.asOf);
+  let gap = null;
+  if (dayEnd > night.end) {
+    const marks = [night.end, ...puffs.filter((p) => !p.night).map((p) => p.t), dayEnd];
+    for (let i = 1; i < marks.length; i++) {
+      if (!gap || marks[i] - marks[i - 1] > gap.to - gap.from) gap = { from: marks[i - 1], to: marks[i] };
+    }
+  }
+
+  const cols = bins.map((b) => {
+    const label = `${hourLabel(b.t)} to ${hourLabel(nextHour(b.t))}`;
+    const value = `${b.count} puff${b.count === 1 ? '' : 's'}`;
+    const extra = b.night ? (b.night === b.count ? 'at night' : `${b.night} at night`) : '';
+    const h = b.count ? Math.max(4, (b.count / yMax) * 100) : 0;
+    return `<div class="dc-slot" tabindex="0" data-value="${value}" data-label="${label}${extra ? ` · ${extra}` : ''}"
+        aria-label="${label}: ${value}${extra ? `, ${extra}` : ''}">${h ? `<div class="dc-col" style="height:${h.toFixed(1)}%"></div>` : ''}</div>`;
+  }).join('');
+
+  const ticks = bins.filter((b) => new Date(b.t).getHours() % 3 === 0).map((b) =>
+    `<span class="${new Date(b.t).getHours() % 6 ? 'minor' : ''}" style="left:${P(b.t).toFixed(2)}%">${hourLabel(b.t)}</span>`).join('');
+
+  const nightTotal = puffs.filter((p) => p.night).length;
+  const gapText = gap ? `Longest gap ${duration(gap.to - gap.from)}` : '';
+  const gapMid = gap ? Math.min(85, Math.max(15, (P(gap.from) + P(gap.to)) / 2)) : 0;
+  const summary = `Puffs per hour: ${puffs.length - nightTotal} in the day, ${nightTotal} at night.${gap ? ` ${gapText}.` : ''}`;
+
+  return `<div class="daychart" role="group" aria-label="${summary}">
+    <p class="dc-title">Puffs per hour</p>
+    <div class="dc-plot">
+      <div class="dc-night" style="left:${P(night.start).toFixed(2)}%;width:${(P(night.end) - P(night.start)).toFixed(2)}%"><span>Asleep</span></div>
+      ${gap ? `<div class="dc-gap" style="left:${P(gap.from).toFixed(2)}%;width:${(P(gap.to) - P(gap.from)).toFixed(2)}%"></div>
+        <span class="dc-gap-label" style="left:${gapMid.toFixed(2)}%">${gapText}</span>` : ''}
+      <div class="dc-top"></div>
+      <span class="dc-y dc-y-max">${yMax}</span><span class="dc-y dc-y-zero">0</span>
+      ${start <= now && now < end ? `<div class="dc-now" style="left:${P(now).toFixed(2)}%" title="Now"></div>` : ''}
+      <div class="dc-cols">${cols}</div>
+    </div>
+    <div class="dc-x">${ticks}</div>
+  </div>`;
+}
+
 function renderLog() {
   const d = store.get();
   const byDay = new Map();
   for (const p of d.puffs) {
     if (p[0] > stats.asOf) continue;
-    const night = nightAt(p[0], d.settings, d.nights);
-    // A night puff belongs to the morning it leads into.
-    const key = night ? night.key : dateKey(p[0]);
+    const key = logDayKey(p[0], d);
     if (!byDay.has(key)) byDay.set(key, []);
-    byDay.get(key).push({ t: p[0], dur: p[1], night: !!night });
+    byDay.get(key).push({ t: p[0], dur: p[1], night: !!nightAt(p[0], d.settings, d.nights) });
   }
 
   const html = [];
@@ -277,14 +348,16 @@ function renderLog() {
     const nightCount = puffs.filter((p) => p.night).length;
     const nt = nightTimes(key, d.settings, d.nights);
     const edited = d.nights[key] ? ' (changed)' : '';
-    html.push(`<details class="day"><summary>
+    const open = openDays.has(key);
+    html.push(`<details class="day" data-key="${key}"${open ? ' open' : ''}><summary>
         <strong>${dayLabel(key)}</strong>
         <span class="counts">☀️ ${puffs.length - nightCount} · 🌙 ${nightCount}</span>
       </summary>
+      ${open ? dayChart(key, puffs, d) : ''}
       <p class="sub">Night ${minToInput(nt.bedMin)} to ${minToInput(nt.wakeMin)}${edited}
         <button class="link" data-night="${key}">Change</button></p>
-      ${puffs.length ? `<ul>${puffs.map((p) =>
-        `<li class="${p.night ? 'night' : ''}">${clock(p.t)} · ${(p.dur / 1000).toFixed(1)} s${p.night ? ' 🌙' : ''}</li>`).join('')}</ul>`
+      ${puffs.length ? `<details class="times"><summary>Show times (${puffs.length})</summary><ul>${puffs.map((p) =>
+        `<li class="${p.night ? 'night' : ''}">${clock(p.t)} · ${(p.dur / 1000).toFixed(1)} s${p.night ? ' 🌙' : ''}</li>`).join('')}</ul></details>`
         : '<p class="sub">No puffs.</p>'}
     </details>`);
   }
@@ -449,6 +522,34 @@ $('night-dialog').addEventListener('close', () => {
   }
   if (action === 'default' || action === 'save') { store.save(); recompute(); }
 });
+// Remember which days are open, and draw a day's chart when it's opened.
+$('log').addEventListener('toggle', (e) => {
+  const day = e.target;
+  if (!day.matches('details.day')) return;
+  if (day.open && !openDays.has(day.dataset.key)) { openDays.add(day.dataset.key); renderLog(); }
+  if (!day.open) openDays.delete(day.dataset.key);
+}, true);
+
+// One tooltip for every chart column, on hover, tap or keyboard focus.
+function showTip(slot) {
+  const tip = $('dc-tip');
+  const value = document.createElement('strong');
+  value.textContent = slot.dataset.value;
+  const label = document.createElement('span');
+  label.textContent = slot.dataset.label;
+  tip.replaceChildren(value, label);
+  tip.hidden = false;
+  const r = slot.getBoundingClientRect();
+  tip.style.left = `${Math.min(window.innerWidth - tip.offsetWidth - 8, Math.max(8, r.left + r.width / 2 - tip.offsetWidth / 2))}px`;
+  tip.style.top = `${r.top - tip.offsetHeight - 8}px`;
+}
+const hideTip = () => { $('dc-tip').hidden = true; };
+$('log').addEventListener('pointerover', (e) => { const s = e.target.closest('.dc-slot'); if (s) showTip(s); });
+$('log').addEventListener('pointerout', (e) => { if (e.target.closest('.dc-slot')) hideTip(); });
+$('log').addEventListener('focusin', (e) => { const s = e.target.closest('.dc-slot'); if (s) showTip(s); });
+$('log').addEventListener('focusout', hideTip);
+window.addEventListener('scroll', hideTip, { passive: true });
+
 $('log-more').addEventListener('click', () => { logDays += 14; renderLog(); });
 
 $('set-bed').addEventListener('change', (e) => {
