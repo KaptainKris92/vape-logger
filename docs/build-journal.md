@@ -255,6 +255,10 @@ Newest entries at the bottom.
 - Fixed in the app: each attempt now times out after 30 s, and after three failures the Windows app starts again from a fresh device lookup, as a restart would. Reconnecting also no longer adds duplicate listeners. Tested with a simulated drop, and with a hang followed by two failures.
 - Still unknown: why the link dropped in the first place.
 
+### 2026-10-20: Sessions
+- The app now groups puffs into sessions. Puffs less than 5 minutes apart are one session, and the threshold can be changed in Settings.
+- The home page shows today's average gap between sessions, and each day in the log shows its own. Only daytime puffs count, so sleep doesn't stretch the gaps.
+
 <!-- Template for new entries:
 ### YYYY-MM-DD: Title
 - What I did

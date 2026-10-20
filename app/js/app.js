@@ -2,7 +2,7 @@ import * as store from './store.js';
 import { VaperTaper, supported } from './ble.js';
 import {
   ACHIEVEMENTS, awakeMs, computeStats, dateKey, gapXp, levelInfo, nextAchievement,
-  nightAt, nightTimes, nightWindow, shiftKey,
+  nightAt, nightTimes, nightWindow, sessionGaps, shiftKey,
 } from './stats.js';
 import { ITEMS, SLOTS, STAGES, companionSvg, stageFor } from './companion.js';
 
@@ -200,6 +200,11 @@ function render() {
   const lastNight = stats.nights.find((x) => x.key === todayKey);
   $('today-count').textContent = today ? today.puffs : 0;
   $('night-count').textContent = lastNight ? lastNight.puffs : 0;
+  const dayKey = logDayKey(Date.now(), d);
+  const sessions = daySessions(d.puffs.filter((p) => p[0] <= stats.asOf && logDayKey(p[0], d) === dayKey)
+    .map((p) => ({ t: p[0], night: !!nightAt(p[0], d.settings, d.nights) })), d);
+  $('today-gap').textContent = sessions.averageMs === null ? '–' : duration(sessions.averageMs);
+  $('today-sessions').textContent = sessionText(sessions);
   const nt = nightTimes(todayKey, d.settings, d.nights);
   $('night-times').textContent = `${minToInput(nt.bedMin)} to ${minToInput(nt.wakeMin)}.`;
 
@@ -267,6 +272,11 @@ function logDayKey(t, d) {
   const k = dateKey(t);
   return t < nightWindow(k, d.settings, d.nights).start ? shiftKey(k, -1) : k;
 }
+
+// Sessions among a log day's awake puffs ({ t, night } objects).
+const daySessions = (puffs, d) =>
+  sessionGaps(puffs.filter((p) => !p.night).map((p) => p.t), (d.settings.sessionMin || 5) * MIN);
+const sessionText = (s) => (s.sessions ? `${s.sessions} session${s.sessions === 1 ? '' : 's'}` : 'No sessions yet');
 
 const HOUR = 3600000;
 const hourLabel = (t) => `${String(new Date(t).getHours()).padStart(2, '0')}:00`;
@@ -349,11 +359,14 @@ function renderLog() {
     const nt = nightTimes(key, d.settings, d.nights);
     const edited = d.nights[key] ? ' (changed)' : '';
     const open = openDays.has(key);
+    const sessions = daySessions(puffs, d);
+    const avgGap = sessions.averageMs === null ? '' : duration(sessions.averageMs);
     html.push(`<details class="day" data-key="${key}"${open ? ' open' : ''}><summary>
         <strong>${dayLabel(key)}</strong>
-        <span class="counts">☀️ ${puffs.length - nightCount} · 🌙 ${nightCount}</span>
+        <span class="counts">☀️ ${puffs.length - nightCount} · 🌙 ${nightCount}${avgGap ? ` · ⏱️ ${avgGap}` : ''}</span>
       </summary>
       ${open ? dayChart(key, puffs, d) : ''}
+      ${sessions.sessions ? `<p class="sub">${sessionText(sessions)}${avgGap ? `, ${avgGap} apart on average` : ''}.</p>` : ''}
       <p class="sub">Night ${minToInput(nt.bedMin)} to ${minToInput(nt.wakeMin)}${edited}
         <button class="link" data-night="${key}">Change</button></p>
       ${puffs.length ? `<details class="times"><summary>Show times (${puffs.length})</summary><ul>${puffs.map((p) =>
@@ -371,6 +384,7 @@ function renderSettings() {
   if (document.activeElement !== $('set-bed')) $('set-bed').value = minToInput(d.settings.bedMin);
   if (document.activeElement !== $('set-wake')) $('set-wake').value = minToInput(d.settings.wakeMin);
   if (document.activeElement !== $('set-name')) $('set-name').value = d.settings.name;
+  if (document.activeElement !== $('set-session')) $('set-session').value = d.settings.sessionMin;
 
   const s = device.status;
   const rows = [
@@ -559,6 +573,11 @@ $('set-bed').addEventListener('change', (e) => {
 $('set-wake').addEventListener('change', (e) => {
   store.get().settings.wakeMin = inputToMin(e.target.value, false);
   store.save(); recompute();
+});
+$('set-session').addEventListener('change', (e) => {
+  const min = Math.round(Number(e.target.value));
+  if (min >= 1 && min <= 120) store.get().settings.sessionMin = min;
+  store.save(); render();
 });
 $('set-name').addEventListener('change', (e) => {
   store.get().settings.name = e.target.value.trim() || 'Pip';

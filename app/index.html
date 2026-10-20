@@ -67,6 +67,9 @@
           <p id="record" class="mid">–</p>
           <p class="label">Today (daytime)</p>
           <p class="mid"><span id="today-count">0</span> <span class="sub">puffs</span></p>
+          <p class="label">Average gap between sessions today</p>
+          <p id="today-gap" class="mid">–</p>
+          <p id="today-sessions" class="sub"></p>
           <p class="label">Last night</p>
           <p class="mid"><span id="night-count">0</span> <span class="sub">puffs</span></p>
           <p class="sub"><span id="night-times"></span> <button id="edit-last-night" class="link">Change bedtime</button></p>
@@ -115,6 +118,8 @@
         <label>Usual bedtime <input type="time" id="set-bed"></label>
         <label>Usual wake-up <input type="time" id="set-wake"></label>
         <p class="sub">Used for every night you haven't changed. Bedtimes from midday onwards count as the evening before.</p>
+        <label>Session ends after <span><input type="number" id="set-session" min="1" max="120" step="1" inputmode="numeric"> min</span></label>
+        <p class="sub">Puffs closer together than this count as one session. The time from the end of one session to the next puff is a gap between sessions.</p>
         <label>Buddy's name <input type="text" id="set-name" maxlength="20"></label>
       </div>
 

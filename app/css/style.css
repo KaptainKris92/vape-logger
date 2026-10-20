@@ -377,3 +377,4 @@ dialog label { display: flex; justify-content: space-between; align-items: cente
   flex-direction: column;
 }
 .dc-tip span { color: var(--muted); font-size: 0.8rem; }
+#set-session { width: 4.5rem; }

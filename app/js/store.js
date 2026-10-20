@@ -11,7 +11,7 @@ function fresh() {
     unknownTime: 0,         // puffs saved before the device knew the time
     devices: {},            // log id -> { next: index of the next record to fetch }
     syncedAt: 0,            // when the log was last fully downloaded
-    settings: { bedMin: 60, wakeMin: 480, name: 'Pip' },
+    settings: { bedMin: 60, wakeMin: 480, name: 'Pip', sessionMin: 5 },
     nights: {},             // morning date -> { bedMin, wakeMin }
     achievements: {},       // id -> time unlocked
     spent: 0,
