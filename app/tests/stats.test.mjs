@@ -2,7 +2,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  awakeMs, computeStats, gapXp, levelInfo, nightAt, xpForLevel, ACHIEVEMENTS,
+  awakeMs, computeStats, gapXp, levelInfo, nightAt, sessionGaps, xpForLevel, ACHIEVEMENTS,
 } from '../js/stats.js';
 
 const H = 3600000;
@@ -61,6 +61,15 @@ test('puffs after asOf are ignored and whole clean days are counted', () => {
   assert.ok(unlocked.includes('day_2'));
   assert.ok(!unlocked.includes('day_3'));
   assert.ok(unlocked.includes('gap_960m'));
+});
+
+test('puffs close together form one session', () => {
+  const M = 60000;
+  // Sessions at 09:00 (3 puffs), 10:00 (2 puffs) and 12:30: gaps of 56 and 149 minutes.
+  const times = [at(10, 9), at(10, 9, 2), at(10, 9, 4), at(10, 10), at(10, 10, 1), at(10, 12, 30)];
+  assert.deepEqual(sessionGaps(times, 5 * M), { sessions: 3, averageMs: ((56 + 149) / 2) * M });
+  assert.deepEqual(sessionGaps(times, 60 * M), { sessions: 2, averageMs: 149 * M });
+  assert.deepEqual(sessionGaps(times.slice(0, 3), 5 * M), { sessions: 1, averageMs: null });
 });
 
 test('a year of heavy use is quick to process', () => {

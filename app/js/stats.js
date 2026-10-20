@@ -59,6 +59,22 @@ export function awakeMs(a, b, settings, overrides) {
   return b - a - asleep;
 }
 
+// ---- Sessions ----
+
+// Puffs less than `thresholdMs` apart belong to one session. `times` are one
+// day's awake puffs, sorted. Returns the number of sessions and the average
+// gap from the end of one session to the start of the next (null if < 2).
+export function sessionGaps(times, thresholdMs) {
+  let sessions = 0, total = 0;
+  for (let i = 0; i < times.length; i++) {
+    const g = i ? times[i] - times[i - 1] : Infinity;
+    if (g < thresholdMs) continue;
+    sessions++;
+    if (i) total += g;
+  }
+  return { sessions, averageMs: sessions > 1 ? total / (sessions - 1) : null };
+}
+
 // ---- XP and levels ----
 
 // XP for a gap between puffs, by awake minutes. It grows with the square of the
