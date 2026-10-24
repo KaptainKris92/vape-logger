@@ -37,6 +37,7 @@ A two-part 3D-printed case that holds the LiPo, the JST socket and the XIAO as o
 - **Material:** PLA. PETG is better if the vape lives in a hot car or a pocket.
 - **Orientation:** the tray with its open side up, and the lid with its flat plate on the bed and the lip pointing up. Neither needs supports.
 - **Settings in Cura:** 0.2 mm layers, 20% infill, no supports, and a brim only if the corners lift.
+- **What I actually used:** 0.1 mm layers, 20% infill, no supports and no build plate adhesion. It printed fine.
 - **Fit:** the lid's lip has a 0.2 mm gap on each side. If it's too loose, set `FIT = 0.1` in the script and re-run it. If it's too tight, set `FIT = 0.3`. A strip of tape across the lid also works.
 
 Print it before you solder anything, and put the parts in loose to check the fit.

@@ -6,6 +6,8 @@ It's also my first hardware engineering project.
 
 **📓 Read the full story in the [Build Journal](docs/build-journal.md)**: background, design decisions, parts list, wiring, milestones and progress notes.
 
+**✍️ New to hardware? The [build blog](blog/index.md)** tells the same story step by step, in plain language, with photos.
+
 **🔧 Learn [How It Works](docs/how-it-works.md)**: the circuit, why there's a 100 kΩ resistor, what every pin does, and step-by-step soldering instructions.
 
 **🧊 See how it fits in the [3D model](docs/3d-model.html)**: an interactive model of the wiring, the printed case, the parts inside it, and the case mounted on the vape, with a wiring diagram. GitHub shows the file as code, so download it and open it in a browser to use it.
