@@ -1,6 +1,6 @@
 # How It Works, and How to Solder It
 
-This page explains the electronics behind the Vape Logger: why there's a 100 kΩ resistor, what each pin on the XIAO does, and how the battery is powered and charged. It finishes with step-by-step soldering instructions.
+This page explains the electronics behind Vaper Taper: why there's a 100 kΩ resistor, what each pin on the XIAO does, and how the battery is powered and charged. It finishes with step-by-step soldering instructions.
 
 **Contents**
 
@@ -97,7 +97,7 @@ The board seen from the top, with the USB-C socket pointing up:
 
 - The **LiPo** connects to the BAT+ and BAT− pads. The board has a **charger chip** built in. Plug in USB-C and it charges the battery, at 50 mA by default according to Seeed. That fills the 150 mAh cell in roughly 3 to 4 hours.
 - On USB, the board runs from USB and tops up the battery. Unplugged, it runs from the battery through the 3.3 V regulator.
-- The plan is for the chip to spend almost all its time in **deep sleep** (System OFF), using only microamps, and to wake on a press. How long the battery lasts depends mostly on how often it wakes to talk Bluetooth. The "measure the sleep current" milestone will turn that into a real number.
+- The firmware keeps the chip in **System ON sleep** and wakes it every 50 ms to check the FSR. System OFF (the deepest sleep) would stop the clock and the radio, so a puff couldn't be timed and the app couldn't connect. In practice the battery drops about 5% a day. The "measure the sleep current" milestone will turn that into a real number.
 
 ## 5. Soldering guide
 
