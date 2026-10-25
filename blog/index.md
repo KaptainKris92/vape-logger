@@ -203,7 +203,7 @@ I tried for a while to save it, but it wasn't going to work. So I bought a [**Dr
 
 ## 10. Learning to solder
 
-My soldering experience has always been frustrating. Back during my MSc degree, I had to create mini home-made mouse electroencephalograms (EEGs) and this was my least favourite part of the project as every connection I made just kept snapping. Apart from that, I did manage to successfully fix a potentiometer on my Ibanez Iceman guitar. 
+My soldering experience has always been frustrating. Back during my MSc degree, I had to create home-made mouse electroencephalogram (EEG) implants and this was my least favourite part of the project as every connection I made just kept snapping. Apart from that, I did manage to successfully fix a potentiometer on my Ibanez Iceman guitar. 
 
 Still, this experience was years old, so I practised on spare wire and a spare resistor first. From this, I learned several lessons.
 
@@ -215,11 +215,11 @@ This turned out to be the most important thing. A dirty tip won't hold solder, n
 2. When it's hot, wipe the tip on **brass wool** (not steel wool, which scratches the tip's coating).
 3. Dip the tip in **tip tinner**. Mine is a solid paste in a little tin ([Thermaltronics TMT-TC-2 from Amazon](https://www.amazon.co.uk/dp/B00NS4J6BY?ref=ppx_yo2ov_dt_b_fed_asin_title)).
 4. Melt a bit of fresh solder onto the tip, so it's shiny and silver.
-5. Always leave a blob of solder on the tip when you put it back in the stand.
+5. Always leave a blob of solder on the tip when you put it back in the stand! This was where I was going wrong the most and was constantly oxidising my soldering iron.
 
 ### Making a joint
 
-1. Put a dab of **flux** on the pad or wire with the flux pen. Just press the tip down on it.
+1. Put a dab of **flux** on the pad or wire with the flux pen. 
 2. Touch the iron to the pad **and** the wire at the same time, so both get hot.
 3. After a second or two, feed the solder into the joint, not onto the iron.
 4. When it flows and looks shiny, take the solder away first, then the iron.
@@ -236,7 +236,7 @@ Heat-shrink is a little plastic tube that shrinks when it gets hot. It covers a 
 
 ## 11. Soldering the resistor
 
-The first real joint was the 100 kΩ resistor. One leg goes in the **D1** hole and the other in the **GND** hole.
+The first real joint was the 100 kΩ resistor. One leg went in the **D1** hole and the other in the **GND** hole.
 
 ![The resistor across the top of the board](images/03a_resistor.jpg)
 
@@ -248,10 +248,9 @@ The first real joint was the 100 kΩ resistor. One leg goes in the **D1** hole a
 
 ### What went wrong
 
-- **The solder just balled up.** It wouldn't stick to the tip, the leg or the board. I turned the heat up to max, and that made it worse. The tip had gone black (oxidised) from sitting hot without any solder on it. The fix was brass wool, then tip tinner, then fresh solder, as in the steps above. After that, it worked straight away.
-- **The GND joint sat on the leg like a ball** instead of flowing onto the pad. I added fresh flux and held the iron on the pad and the leg together. Then it flowed properly.
+**The 2nd (GND) solder just balled up.** It wouldn't stick to the tip, the leg or the board. I turned the heat up to max, and that made it worse. The tip had gone black (oxidised) from sitting hot without any solder on it. The fix was brass wool, then tip tinner, then fresh solder, as in the steps above. After that, it worked straight away on future solders.
 
-I checked the resistor with the multimeter on the **200k** setting. It read about **55 kΩ**, not 100. That's normal: when a part is already on the board, other paths through the board change the reading.
+I checked the resistor with the multimeter on the **200k** setting. It read about **55 kΩ**, not 100. That's apparently normal: when a part is already on the board, other paths through the board change the reading.
 
 ## 12. Soldering the two sensor wires
 
@@ -265,7 +264,7 @@ My 3V3 joint was messy and close to its neighbours. So before going any further,
 2. Probes on 3V3 and GND: about **80 to 100 kΩ**.
 3. Probes on 3V3 and the pad next to it (pin 10): about **55 kΩ**.
 
-A short would read close to zero. These didn't, so nothing was joined that shouldn't be.
+A short would read close to zero. Luckily, these didn't, so nothing was joined that shouldn't be.
 
 Then I added the D1 wire.
 
@@ -273,11 +272,11 @@ Then I added the D1 wire.
 
 ![Another view of both wires](images/05b_both_cables.jpg)
 
-*The brown marks on the paper are burnt flux. It's normal, and it smells.*
+*The brown marks on the paper are burnt flux. It's apparently normal, and it smells.*
 
 ## 13. Soldering the sensor
 
-Next, the other ends of the two wires go onto the FSR's two legs. The FSR doesn't care which wire goes on which leg. It's just a resistor that changes when you press it.
+Next, the other ends of the two wires went onto the FSR's two legs. The FSR doesn't care which wire goes on which leg. It's just a resistor that changes when you press it.
 
 ![Both wires on the FSR](images/06_fst.jpg)
 
@@ -316,15 +315,15 @@ It printed **0 to 3** untouched and **close to 1000** when pressed. That's as go
 
 ### On battery
 
-Finally, I unplugged the USB cable and plugged in the battery. I pressed the sensor, and the red LED lit up. It worked on battery alone! That was a great moment.
+Finally, I unplugged the USB cable and plugged in the battery. I pressed the sensor, and the red LED lit up. It worked on battery alone! Hoorah.
 
 ## 16. Giving it a name
 
-"Vape Logger" was a bit dull. I thought of **Vaper Taper**, because the goal is to taper off. The tagline is **"Taper the vaper"**. The board now shows up over Bluetooth as `VaperTaper`.
+"Vape Logger" was a bit dull so I went with **Vaper Taper**, because the goal is to taper off and it rhymes... The board now shows up over Bluetooth as `VaperTaper`.
 
 ## 17. The firmware
 
-The firmware is the program that runs on the board all the time. I wrote it with **Claude Code**, describing what I wanted and testing each version on the real device.
+I wrote the firmware with **Claude Code**, describing what I wanted and testing each version on the real device.
 
 Here's what it does, in plain terms:
 
@@ -336,61 +335,66 @@ Here's what it does, in plain terms:
 - My PC and my phone can **both** be connected at the same time.
 - The board has no real clock, so the app tells it the time every time it connects.
 
-To put it on the board, I opened `firmware/vaper_taper/vaper_taper.ino` in the Arduino IDE and clicked **Upload**, just like Blink.
+To put it on the board, I opened `firmware/vaper_taper/vaper_taper.ino` in the Arduino IDE and clicked **Upload**, just like the previous test software.
 
 ## 18. The app
 
-The app is also written with Claude Code. It's a web page that talks to the board over **Web Bluetooth**. It works in Chrome or Edge on my PC, and in Chrome on my Android phone. It can be installed so it opens like a normal app. All the data stays on my own devices.
+The app is also written with Claude Code. At heart it's a web page that talks to the board over **Web Bluetooth**. I use it in two ways:
+
+- **On Windows:** a proper desktop app (`desktop/`). It's the same web page wrapped in **Electron**, which is what apps like Discord and VS Code are built with. It finds and connects to the board by itself, sits in the system tray next to the clock, and starts with Windows. If the board goes out of range, it tries again every 30 seconds.
+- **On my Android phone:** the web page itself, opened in Chrome from GitHub Pages and installed to the home screen, so it opens like a normal app. It catches up with any new puffs whenever I open it.
+
+The board can stay connected to both at once, and each one downloads the full log. All the data stays on my own devices.
 
 ![The app's home screen](images/11_app_main_menu.jpg)
 
 The home screen shows:
 
-- **Vape-free time:** how long since my last puff. It only counts awake time, so sleeping doesn't count as "not vaping".
+- **Vape-free time:** how long since my last puff. It only counts awake time, so sleeping doesn't count as "not vaping". Every puff restarts it, night puffs included.
 - **Record:** my longest gap so far.
 - **Today's puffs**, and **last night's** puffs separately. Night is 01:00 to 08:00 by default, and I can change bedtime for any night.
-- **Battery level**, with a warning when it gets low.
-- **Pip**, my little buddy. Pip levels up as I earn XP from going longer without vaping.
+- **Average gap between sessions** today. Puffs less than 5 minutes apart count as one session.
+- **Battery level**, with a warning when it drops below 20%.
+- **Pip**, my little buddy. Pip levels up as I earn XP from going longer without vaping. XP also earns coins to spend in Pip's shop.
 - My **next achievement** to aim for.
 
-There's also a log with a chart of puffs per hour for each day, and the average gap between vaping sessions.
+There's also a log with a chart of puffs per hour for each day, and that day's average gap between sessions.
 
-On Windows, there's a tray app version (`desktop/`). It's the same app, but it connects by itself, sits in the system tray and starts with Windows. That fixed an annoying problem: the browser kept asking me to pick the device again after every refresh.
+Bedtime changes and Pip's wardrobe are saved separately on each device. **Settings > Backup** makes a file I can import on the other one to combine them.
 
 ### What went wrong
 
-- **The browser kept forgetting the device.** Reconnecting automatically needs the **Experimental Web Platform features** flag (in `edge://flags` or `chrome://flags`). The tray app avoids this altogether.
-- **Stuck on "Connecting…".** After about 49 minutes, the tray app lost the device and never got it back. Windows sometimes gives an incomplete answer when reconnecting. The fix was to give up on each attempt after 30 seconds, and start afresh after three failures.
+- **The browser kept forgetting the device.** After every refresh, Edge asked me to pick the board again. Reconnecting by itself needs the **Experimental Web Platform features** flag (in `edge://flags` or `chrome://flags`). Rather than rely on a flag, I made the Windows app, which picks the board by itself.
+- **Stuck on "Connecting…".** After about 49 minutes, the Windows app lost the board and never got it back. Windows sometimes gives an incomplete answer when reconnecting, and an attempt can hang with no error. The fix was to give up on each attempt after 30 seconds, and start afresh after three failures.
 
 ## 19. Putting it on the vape
 
-For now, it's held on with clear tape. The FSR sits flat over the fire button, and its tail runs round the side to the case on the back.
+For now, the wires are held in place with clear tape, FSR with the sticky backing it came with, and the 3D-printed case with double-sided Gorilla tape ([Amazon link](https://www.amazon.co.uk/dp/B01FMXKIOM?ref=ppx_yo2ov_dt_b_fed_asin_title)). The FSR sits flat over the fire button, and its tail runs round the side to the case on the back.
 
 ![Front view: the FSR over the fire button](images/10b_final_poc_2.jpg)
 
 ![Back view: the printed case taped on](images/10a_final_poc_1.jpg)
 
-I press the fire button exactly as before. The green LED flashes, and the puff shows up in the app a second or two later.
+I press the fire button exactly as before. The green LED flashes, and the puff shows up in the Windows app a second or two later. The phone picks it up next time I open the app.
 
 ## 20. What I learned
 
-- **Keep the tip clean and tinned.** Almost all my soldering trouble was a dirty tip. More heat doesn't fix it.
+- **Keep the tip clean and tinned.** Almost all my soldering trouble was a dirty tip. More heat doesn't fix it and cleaning should be done with **brass, not steel** wool. 
 - **Flux makes everything easier.** Use it on every joint.
 - **Heat the pad and the wire together.** Feed the solder into the joint, not onto the iron.
-- **Slide heat-shrink on before you solder.**
+- **Slide heat-shrink on before you solder.** Easier said than to remember...
 - **Check for shorts with a multimeter before plugging in.**
 - **Check battery polarity before soldering the battery lead.**
 - **No spaces in folder names** for Arduino sketches on this board.
-- **If the board's port vanishes,** try **Tools > Reload board data**, then a double-tap on reset.
-- **Practise first.** A few joints on spare wire saved my real board.
-- **Remove the location data from phone photos** before putting them online. Phone photos have GPS coordinates hidden in them.
+- **If the board's port vanishes,** try **Tools > Reload board data**, then a double-tap on the microcontroller's reset button.
+- **Web Bluetooth in a browser is fiddly.** Wrapping the page in Electron made it connect reliably on Windows and avoids having to keep a webpage permanently open.
 
 ## 21. What's next
 
-- Wear it for a week and see what the data says about my habits.
-- Measure how much power it uses while sleeping, to work out the battery life.
-- Make a proper clip-on sleeve that fits the Aegis Legend 5, instead of tape.
-- Keep tapering!
+- I've used it for 5 days and managed to hit a PB of 2 hours in between puffs. This sounds quite pathetic (and it is), but with an average inter-vape time of 15-30 minutes, it's progress...
+- Measure how much power it uses while sleeping, to work out the battery life. So far, it only loses ~5% per day which is impressive.
+- Find out why the Bluetooth link sometimes drops. The app recovers now, but I still don't know the cause.
+- Make a proper clip-on sleeve that fits the Aegis Legend 5, instead of tape. Right now, the whole device looks like an IED and probably would raise some eyebrows with any security...
 
 ---
 
