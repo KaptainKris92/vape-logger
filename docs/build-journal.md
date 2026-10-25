@@ -1,8 +1,10 @@
-# Vape Logger: Build Journal
+# Vaper Taper: Build Journal
 
 A record of building a small clip-on device that automatically logs every puff from my vape, plus a phone app to see the data. It covers the background, the decisions, the parts and what happened at each step, including the mistakes.
 
-**Status:** 🟢 Parts arrived. The board is programmed and blinking.
+**Status:** 🟢 Built, mounted on the vape and in daily use. Next: measure the sleep current and make a clip-on sleeve.
+
+The step-by-step version of this story, with photos, is on my blog: [Building Vaper Taper](https://kaptainkris92.github.io/blog/building-vaper-taper/).
 
 ---
 
@@ -164,14 +166,14 @@ Writing the code is done with Claude Code. **Uploading the firmware** needs the 
 - [x] Wire the FSR and resistor; read presses over USB serial
 - [x] Firmware: low-power sleep, log puffs to flash
 - [x] Bluetooth test with no wiring: `firmware/ble_test/` and a phone app
-- [ ] Firmware: Bluetooth service, tested with the nRF Connect app
+- [x] Firmware: Bluetooth service, tested with the app
 - [x] Web app: connect, sync time, download puffs
-- [ ] Web app: stats, achievements and buddy (written, needs testing)
-- [ ] Install the tray app on the PC and the web app on the phone
+- [x] Web app: stats, achievements and buddy
+- [x] Install the tray app on the PC and the web app on the phone
 - [ ] Measure the sleep current and estimate battery life
-- [ ] Mount on the vape (version 1: tape and heat-shrink)
+- [x] Mount on the vape (version 1: tape and heat-shrink)
 - [ ] Wear it for a week and review the data
-- [ ] Print the case and check the fit (version 1.5: taped on)
+- [x] Print the case and check the fit (version 1.5: taped on)
 - [ ] Version 2: 3D-printed clip-on sleeve
 
 ## 9. Safety notes
@@ -258,6 +260,13 @@ Newest entries at the bottom.
 ### 2026-10-20: Sessions
 - The app now groups puffs into sessions. Puffs less than 5 minutes apart are one session, and the threshold can be changed in Settings.
 - The home page shows today's average gap between sessions, and each day in the log shows its own. Only daytime puffs count, so sleep doesn't stretch the gaps.
+
+### 2026-10-25: Five days on the vape, and the blog
+- The printed case is taped to the back of the vape with double-sided Gorilla tape, and the FSR sits on the fire button with its own sticky backing.
+- After 5 days of use, my longest gap between puffs is 2 hours. My usual gap is 15 to 30 minutes.
+- The battery drops about 5% a day.
+- Published the build blog at [kaptainkris92.github.io](https://kaptainkris92.github.io/blog/building-vaper-taper/). It moved out of this repo, so `blog/` is gone, and so is `photos/` (the full-size originals of the blog photos).
+- Next step: measure the sleep current, find out why the Bluetooth link sometimes drops, and design a clip-on sleeve.
 
 <!-- Template for new entries:
 ### YYYY-MM-DD: Title

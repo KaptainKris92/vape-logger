@@ -42,3 +42,4 @@ The owner is new to hardware. They use **Windows** and the **Arduino IDE 2** (no
 - Writing style in docs: plain British English, short sentences, no em-dashes.
 - There is no CI for firmware. The Seeed core is installed on the owner's PC, so a sketch can be compile-checked with a downloaded `arduino-cli` and `--config-file ~/.arduinoIDE/arduino-cli.yaml --fqbn Seeeduino:nrf52:xiaonRF52840`, from a copy in a path with no spaces. Behaviour is still verified by the owner on the device.
 - App logic tests: `node --test app/tests/stats.test.mjs`.
+- The build blog lives in the `kaptainkris92.github.io` repo (`_posts/2026-10-25-building-vaper-taper.md`), published at <https://kaptainkris92.github.io/blog/building-vaper-taper/>. That site also hosts a copy of `docs/3d-model.html`. Don't create a folder called `vape-logger` there: that path is this repo's Pages site.

@@ -1,34 +1,43 @@
-# Vape Logger
+# Vaper Taper
 
-A small clip-on device that automatically logs every puff from my vape (a Geekvape Aegis Legend 5) and sends the data to my phone over Bluetooth. I'm building it to help me cut down: vaping has become a subconscious habit, and the vape's built-in puff counter isn't automatic or detailed enough to show me my patterns.
+*Taper the vaper.*
 
-It's also my first hardware engineering project.
+A small clip-on device that automatically logs every puff from my vape (a Geekvape Aegis Legend 5) and sends the data to my phone and PC over Bluetooth. I built it to help me cut down: vaping had become a subconscious habit, and the vape's built-in puff counter isn't automatic or detailed enough to show me my patterns.
 
-**📓 Read the full story in the [Build Journal](docs/build-journal.md)**: background, design decisions, parts list, wiring, milestones and progress notes.
+It's also my first hardware engineering project. The repo is still called `vape-logger`.
 
-**✍️ New to hardware? The [build blog](blog/index.md)** tells the same story step by step, in plain language, with photos.
+**✍️ New to hardware? Read the [build blog](https://kaptainkris92.github.io/blog/building-vaper-taper/)**: the whole story step by step, in plain language, with photos.
 
-**🔧 Learn [How It Works](docs/how-it-works.md)**: the circuit, why there's a 100 kΩ resistor, what every pin does, and step-by-step soldering instructions.
+**📓 The [Build Journal](docs/build-journal.md)** has the background, design decisions, parts list, wiring, milestones and dated progress notes.
 
-**🧊 See how it fits in the [3D model](docs/3d-model.html)**: an interactive model of the wiring, the printed case, the parts inside it, and the case mounted on the vape, with a wiring diagram. GitHub shows the file as code, so download it and open it in a browser to use it.
+**🔧 [How It Works](docs/how-it-works.md)** explains the circuit, why there's a 100 kΩ resistor, what every pin does, and how to solder it.
+
+**🧊 The [3D model](https://kaptainkris92.github.io/projects/vaper-taper/3d-model.html)** shows the wiring, the printed case, the parts inside it, and the case mounted on the vape.
 
 ## At a glance
 
 - **Sensor:** a force-sensitive resistor on the fire button
-- **Brain:** Seeed XIAO nRF52840 (Bluetooth LE, deep sleep, LiPo charging)
-- **Power:** 150 mAh LiPo, charged over USB-C
-- **App:** an installable Web Bluetooth app for Chrome/Edge on Windows and Chrome on Android, hosted on GitHub Pages ([app/README.md](app/README.md))
+- **Brain:** Seeed XIAO nRF52840 (Bluetooth LE, low-power sleep, LiPo charging)
+- **Power:** 150 mAh LiPo, charged over USB-C. It drops about 5% a day.
+- **Case:** two-part 3D-printed tray and lid, taped to the back of the vape
+- **Apps:** an installable Web Bluetooth app for Chrome on Android, hosted at <https://kaptainkris92.github.io/vape-logger/> ([app/README.md](app/README.md)), and the same app as a Windows tray app that connects by itself ([desktop/README.md](desktop/README.md))
 
 ## Repository layout
 
 ```
-docs/       build journal, 3D fit model, wiring notes, photos
+docs/       build journal, how it works, 3D fit model, photos
 case/       3D-printable case (STL files and the script that makes them)
-firmware/   Arduino code for the XIAO
-app/        Vaper Taper app for PC and phone (Web Bluetooth)
+firmware/   Arduino code for the XIAO (the main sketch is firmware/vaper_taper)
+app/        Vaper Taper web app for PC and phone (Web Bluetooth)
 desktop/    Windows tray app: app/ wrapped in Electron
 ```
 
 ## Status
 
-🟡 Main firmware and app written. Next: upload and test them together.
+🟢 Built, mounted on the vape and in daily use.
+
+Next:
+
+- Measure the sleep current to work out the battery life properly.
+- Find out why the Bluetooth link sometimes drops. The apps recover, but the cause is unknown.
+- Replace the tape with a clip-on sleeve that fits the Aegis Legend 5.
